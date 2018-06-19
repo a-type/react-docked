@@ -1,6 +1,6 @@
 // @flow
 import React, { type Node } from 'react';
-import { type Point, type Attachment, type Alignment } from './types';
+import { type Point, type Attachment, type Alignment, type DockedContainerInfo } from './types';
 
 const getPositionalStyles = ({
   attachment,
@@ -13,56 +13,56 @@ const getPositionalStyles = ({
       switch (alignment) {
         case 'end':
           return {
-            top: anchorPoint.top + anchorEdgeLength / 2,
-            left: anchorPoint.left,
+            bottom: anchorPoint.bottom - anchorEdgeLength / 2,
+            right: anchorPoint.right,
           };
         case 'center':
           return {
             top: anchorPoint.top,
-            left: anchorPoint.left,
+            right: anchorPoint.right,
             transform: 'translateY(-50%)',
           };
         default:
           return {
             top: anchorPoint.top - anchorEdgeLength / 2,
-            left: anchorPoint.left,
+            right: anchorPoint.right,
           };
       }
     case 'right':
       switch (alignment) {
         case 'end':
           return {
-            top: anchorPoint.top + anchorEdgeLength / 2,
-            right: anchorPoint.left,
+            bottom: anchorPoint.bottom - anchorEdgeLength / 2,
+            left: anchorPoint.left,
           };
         case 'center':
           return {
             top: anchorPoint.top,
-            right: anchorPoint.left,
+            left: anchorPoint.left,
             transform: 'translateY(-50%)',
           };
         default:
           return {
             top: anchorPoint.top - anchorEdgeLength / 2,
-            right: anchorPoint.left,
+            left: anchorPoint.left,
           };
       }
     case 'top':
       switch (alignment) {
         case 'end':
           return {
-            bottom: anchorPoint.top,
-            left: anchorPoint.left + anchorEdgeLength / 2,
+            bottom: anchorPoint.bottom,
+            right: anchorPoint.right - anchorEdgeLength / 2,
           };
         case 'center':
           return {
-            bottom: anchorPoint.top,
+            bottom: anchorPoint.bottom,
             left: anchorPoint.left,
             transform: 'translateX(-50%)',
           };
         default:
           return {
-            bottom: anchorPoint.top,
+            bottom: anchorPoint.bottom,
             left: anchorPoint.left - anchorEdgeLength / 2,
           };
       }
@@ -71,7 +71,7 @@ const getPositionalStyles = ({
         case 'end':
           return {
             top: anchorPoint.top,
-            right: anchorPoint.left + anchorEdgeLength / 2,
+            right: anchorPoint.right - anchorEdgeLength / 2,
           };
         case 'center':
           return {
@@ -116,14 +116,10 @@ const getSizeStyles = ({
   }
 };
 
-export type DockedContainerProps = {
-  anchorPoint: Point,
-  attachment: Attachment,
-  alignment: Alignment,
-  anchorEdgeLength: number,
-  availableSpace: number,
-  availableOrthogonalSpace: number,
-  children: Node,
+export type DockedContentRenderFunction = (info: DockedContainerInfo) => Node;
+
+export type DockedContainerProps = DockedContainerInfo & {
+  children: Node | DockedContentRenderFunction,
 };
 
 export type DockedContainerState = {
@@ -140,19 +136,27 @@ export default class DockedContainer extends React.PureComponent<
         position: 'absolute',
         ...getPositionalStyles(props),
         ...getSizeStyles(props),
+        ...props.extraStyle,
       },
     };
   }
 
   state = { style: {} };
 
+  renderChildren = () => {
+    const { children, ...rest } = this.props;
+    if (typeof children === 'function') {
+      return children(rest);
+    }
+    return children;
+  }
+
   render() {
-    const { children } = this.props;
     const { style } = this.state;
 
     return (
       <div className="Docked--Container" style={style}>
-        {children}
+        {this.renderChildren()}
       </div>
     );
   }

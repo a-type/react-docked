@@ -3,7 +3,7 @@ import React, { type Component, type Node } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import DockedContainer, { type DockedContainerProps } from './DockedContainer';
-import { type Point, type Attachment, type Alignment } from './types';
+import { type Point, type Attachment, type Alignment, type DockedMiddlewareFunction } from './types';
 
 export type RenderPropArgs = {
   anchorRef(el: Element): mixed,
@@ -16,6 +16,8 @@ export type DockedProps = {
   desiredSpace: number,
   children(args: RenderPropArgs): Node,
   contextElementSelector: string,
+  containerStyle: {},
+  middleware: DockedMiddlewareFunction,
   Container: Component<DockedContainerProps>,
   environment: {
     window: any,
@@ -55,6 +57,8 @@ export default class Docked extends React.Component<DockedProps, DockedState> {
     attachment: 'bottom',
     desiredSpace: 0,
     contextElementSelector: 'body',
+    containerStyle: {},
+    middleware: null,
     Container: DockedContainer,
     environment: { window },
   };
@@ -70,7 +74,7 @@ export default class Docked extends React.Component<DockedProps, DockedState> {
   };
 
   handleResize = () => {
-    this.updatePlacement(this.state.anchorElement, this.state.contextElement);
+    this.updatePlacement(this.state.anchorElement);
   };
   resizeObserver = new window.ResizeObserver(this.handleResize);
 
@@ -104,9 +108,21 @@ export default class Docked extends React.Component<DockedProps, DockedState> {
 
       this.setState({ anchorElement, contextElement });
 
-      this.updatePlacement(anchorElement, contextElement);
+      this.updatePlacement(anchorElement);
     }
   };
+
+  getWindowBounds = () => {
+    const { environment: { window } } = this.props;
+    return {
+      scrollLeft: window.scrollX,
+      scrollTop: window.scrollY,
+      clientWidth: window.innerWidth || window.document.documentElement.clientWidth || window.document.body.clientWidth,
+      clientHeight: window.innerHeight || window.document.documentElement.clientHeight || window.document.body.clientHeight,
+      scrollWidth: window.document.documentElement.scrollWidth,
+      scrollHeight: window.document.documentElement.scrollHeight,
+    };
+  }
 
   updatePlacement = (anchorElement: ?HTMLElement) => {
     const { attachment, desiredSpace, alignment, environment } = this.props;
@@ -117,21 +133,21 @@ export default class Docked extends React.Component<DockedProps, DockedState> {
     // get some basic values to work with
 
     const anchorBounds = anchorElement.getBoundingClientRect();
-    const { scrollX, scrollY, clientWidth, clientHeight } = environment.window;
+    const { scrollLeft, scrollTop, clientWidth, clientHeight, scrollWidth, scrollHeight } = this.getWindowBounds();
+    console.info(this.getWindowBounds());
 
     console.info(anchorBounds);
 
-    const anchorTop = anchorBounds.top - scrollY;
-    const anchorLeft = anchorBounds.left - scrollX;
+    const anchorTop = anchorBounds.top - scrollTop;
+    const anchorLeft = anchorBounds.left - scrollLeft;
     const anchorBottom = anchorTop + anchorBounds.height;
     const anchorRight = anchorLeft + anchorBounds.width;
-    const anchorHorizontalCenterLeft = anchorLeft + anchorBounds.width / 2;
-    const anchorVerticalCenterTop = anchorTop + anchorBounds.height / 2;
+    const anchorHorizontalCenter = anchorLeft + anchorBounds.width / 2;
+    const anchorVerticalCenter = anchorTop + anchorBounds.height / 2;
 
-    const anchorPoints: { [Attachment]: Point } = {
+    const anchorPoints: { [Attachment]: { top: number, left: number } } = {
       top: {
         left: anchorHorizontalCenter,
-        right:
         top: anchorTop,
       },
       bottom: {
@@ -200,8 +216,16 @@ export default class Docked extends React.Component<DockedProps, DockedState> {
     })();
     console.info(orthogonalSpace);
 
+    const addRightAndBottom = (point: { left: number, top: number }): Point => ({
+      ...point,
+      right: scrollWidth - point.left,
+      bottom: scrollHeight - point.top,
+    });
+    const anchorPoint = addRightAndBottom(anchorPoints[chosenAttachment]);
+    console.info(anchorPoint);
+
     this.setState({
-      anchorPoint: anchorPoints[chosenAttachment],
+      anchorPoint,
       availableSpace: surroundingSpace[chosenAttachment],
       anchorEdgeLength,
       currentAttachment: chosenAttachment,
@@ -216,17 +240,18 @@ export default class Docked extends React.Component<DockedProps, DockedState> {
     anchorEdgeLength: this.state.anchorEdgeLength,
     availableSpace: this.state.availableSpace,
     availableOrthogonalSpace: this.state.availableOrthogonalSpace,
+    extraStyle: this.props.containerStyle,
   });
 
   renderDocked = (node: Node) => {
-    const { Container } = this.props;
+    const { Container, middleware } = this.props;
 
     const containerProps = this.getContainerProps();
 
     return (
       this.state.contextElement &&
       ReactDOM.createPortal(
-        <Container {...containerProps}>{node}</Container>,
+        <Container {...containerProps}>{middleware ? middleware(node) : node}</Container>,
         this.state.contextElement,
       )
     );
