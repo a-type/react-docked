@@ -1,0 +1,16 @@
+{
+  "presets": [
+    [
+      "env",
+      {
+        "modules": "commonjs"
+      }
+    ],
+    "react",
+    "flow"
+  ],
+  "plugins": [
+    "transform-object-rest-spread",
+    "babel-plugin-transform-class-properties"
+  ]
+}
