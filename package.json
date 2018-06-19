@@ -1,0 +1,54 @@
+{
+  "name": "react-docked",
+  "version": "0.1.0",
+  "description": "Versatile and stable global alignment for popouts, selects, suggestions, and anything else you need docked",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "@storybook/addon-actions": "^3.4.7",
+    "@storybook/addon-links": "^3.4.7",
+    "@storybook/addons": "^3.4.7",
+    "@storybook/react": "^3.4.7",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-flow": "^6.23.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-runtime": "^6.26.0",
+    "flow-bin": "^0.74.0",
+    "lorem-ipsum": "^1.0.5",
+    "npm-run-all": "^4.1.3",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "rimraf": "^2.6.2"
+  },
+  "peerDependencies": {
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "flow": "flow",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/a-type/react-docked.git"
+  },
+  "keywords": [
+    "react",
+    "popover",
+    "popout",
+    "docked"
+  ],
+  "author": "Grant Forrest <gaforres@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/a-type/react-docked/issues"
+  },
+  "homepage": "https://github.com/a-type/react-docked#readme"
+}
