@@ -3,7 +3,12 @@ import React, { type Component, type Node } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import DockedContainer, { type DockedContainerProps } from './DockedContainer';
-import { type Point, type Attachment, type Alignment, type DockedMiddlewareFunction } from './types';
+import {
+  type Point,
+  type Attachment,
+  type Alignment,
+  type DockedMiddlewareFunction,
+} from './types';
 
 export type RenderPropArgs = {
   anchorRef(el: Element): mixed,
@@ -48,9 +53,7 @@ const getPrimaryAttachment = (
  * overlay anchored against a target element. It was designed to
  * render 'dropdown' style lists for search/select inputs. It uses
  * React portals to render the overlay element in relation to the
- * screen-space position of the anchor element. Supports polling
- * for position changes in more advanced cases where layout is not
- * reliably static.
+ * screen-space position of the anchor element.
  */
 export default class Docked extends React.Component<DockedProps, DockedState> {
   static defaultProps = {
@@ -113,16 +116,24 @@ export default class Docked extends React.Component<DockedProps, DockedState> {
   };
 
   getWindowBounds = () => {
-    const { environment: { window } } = this.props;
+    const {
+      environment: { window },
+    } = this.props;
     return {
       scrollLeft: window.scrollX,
       scrollTop: window.scrollY,
-      clientWidth: window.innerWidth || window.document.documentElement.clientWidth || window.document.body.clientWidth,
-      clientHeight: window.innerHeight || window.document.documentElement.clientHeight || window.document.body.clientHeight,
+      clientWidth:
+        window.innerWidth ||
+        window.document.documentElement.clientWidth ||
+        window.document.body.clientWidth,
+      clientHeight:
+        window.innerHeight ||
+        window.document.documentElement.clientHeight ||
+        window.document.body.clientHeight,
       scrollWidth: window.document.documentElement.scrollWidth,
       scrollHeight: window.document.documentElement.scrollHeight,
     };
-  }
+  };
 
   updatePlacement = (anchorElement: ?HTMLElement) => {
     const { attachment, desiredSpace, alignment, environment } = this.props;
@@ -133,10 +144,14 @@ export default class Docked extends React.Component<DockedProps, DockedState> {
     // get some basic values to work with
 
     const anchorBounds = anchorElement.getBoundingClientRect();
-    const { scrollLeft, scrollTop, clientWidth, clientHeight, scrollWidth, scrollHeight } = this.getWindowBounds();
-    console.info(this.getWindowBounds());
-
-    console.info(anchorBounds);
+    const {
+      scrollLeft,
+      scrollTop,
+      clientWidth,
+      clientHeight,
+      scrollWidth,
+      scrollHeight,
+    } = this.getWindowBounds();
 
     const anchorTop = anchorBounds.top - scrollTop;
     const anchorLeft = anchorBounds.left - scrollLeft;
@@ -163,7 +178,6 @@ export default class Docked extends React.Component<DockedProps, DockedState> {
         top: anchorVerticalCenter,
       },
     };
-    console.info(anchorPoints);
 
     const surroundingSpace: { [Attachment]: number } = {
       bottom: clientHeight - anchorBottom,
@@ -171,7 +185,6 @@ export default class Docked extends React.Component<DockedProps, DockedState> {
       left: anchorLeft,
       right: clientWidth - anchorRight,
     };
-    console.info(surroundingSpace);
 
     // iterate through attachments until one with preferred space is available
     const priorityListOfAttachments: Attachment[] = [].concat(attachment);
@@ -214,15 +227,16 @@ export default class Docked extends React.Component<DockedProps, DockedState> {
           }
       }
     })();
-    console.info(orthogonalSpace);
 
-    const addRightAndBottom = (point: { left: number, top: number }): Point => ({
+    const addRightAndBottom = (point: {
+      left: number,
+      top: number,
+    }): Point => ({
       ...point,
       right: scrollWidth - point.left,
       bottom: scrollHeight - point.top,
     });
     const anchorPoint = addRightAndBottom(anchorPoints[chosenAttachment]);
-    console.info(anchorPoint);
 
     this.setState({
       anchorPoint,
@@ -251,7 +265,9 @@ export default class Docked extends React.Component<DockedProps, DockedState> {
     return (
       this.state.contextElement &&
       ReactDOM.createPortal(
-        <Container {...containerProps}>{middleware ? middleware(node) : node}</Container>,
+        <Container {...containerProps}>
+          {middleware ? middleware(node) : node}
+        </Container>,
         this.state.contextElement,
       )
     );

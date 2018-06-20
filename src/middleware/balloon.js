@@ -54,42 +54,61 @@ export default (config: BalloonConfig = {}) => {
         return {
           borderLeft: `${defaultedConfig.arrowSize}px solid transparent`,
           borderRight: `${defaultedConfig.arrowSize}px solid transparent`,
-          borderBottom: `${defaultedConfig.arrowSize}px solid ${defaultedConfig.color}`,
+          borderBottom: `${defaultedConfig.arrowSize}px solid ${
+            defaultedConfig.color
+          }`,
         };
       case 'top':
         return {
           borderLeft: `${defaultedConfig.arrowSize}px solid transparent`,
           borderRight: `${defaultedConfig.arrowSize}px solid transparent`,
-          borderTop: `${defaultedConfig.arrowSize}px solid ${defaultedConfig.color}`,
+          borderTop: `${defaultedConfig.arrowSize}px solid ${
+            defaultedConfig.color
+          }`,
         };
       case 'right':
         return {
           borderTop: `${defaultedConfig.arrowSize}px solid transparent`,
           borderBottom: `${defaultedConfig.arrowSize}px solid transparent`,
-          borderRight: `${defaultedConfig.arrowSize}px solid ${defaultedConfig.color}`,
+          borderRight: `${defaultedConfig.arrowSize}px solid ${
+            defaultedConfig.color
+          }`,
         };
       case 'left':
         return {
           borderTop: `${defaultedConfig.arrowSize}px solid transparent`,
           borderBottom: `${defaultedConfig.arrowSize}px solid transparent`,
-          borderLeft: `${defaultedConfig.arrowSize}px solid ${defaultedConfig.color}`,
-        }
+          borderLeft: `${defaultedConfig.arrowSize}px solid ${
+            defaultedConfig.color
+          }`,
+        };
     }
   };
-  
+
   return (children: Node) => (info: DockedContainerInfo): Node => (
-    <div className={defaultedConfig.outerClassName} style={{
-      display: 'flex',
-      flexDirection: flexMap[info.attachment],
-    }}>
-      <div className={defaultedConfig.arrowClassName} style={{
-        alignSelf: alignmentMap[info.alignment],
-        margin: ['left', 'right'].includes(info.attachment) ? `${defaultedConfig.arrowCornerOffset}px 0` : `0 ${defaultedConfig.arrowCornerOffset}px`,
-        width: 0,
-        height: 0,
-        ...triangleStyles(info), 
-      }}/>
-      <div className={defaultedConfig.contentClassName} style={{ background: defaultedConfig.color }}>
+    <div
+      className={defaultedConfig.outerClassName}
+      style={{
+        display: 'flex',
+        flexDirection: flexMap[info.attachment],
+      }}
+    >
+      <div
+        className={defaultedConfig.arrowClassName}
+        style={{
+          alignSelf: alignmentMap[info.alignment],
+          margin: ['left', 'right'].includes(info.attachment)
+            ? `${defaultedConfig.arrowCornerOffset}px 0`
+            : `0 ${defaultedConfig.arrowCornerOffset}px`,
+          width: 0,
+          height: 0,
+          ...triangleStyles(info),
+        }}
+      />
+      <div
+        className={defaultedConfig.contentClassName}
+        style={{ background: defaultedConfig.color }}
+      >
         {children}
       </div>
     </div>

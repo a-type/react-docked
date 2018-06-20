@@ -11,6 +11,7 @@
     "@storybook/react": "^3.4.7",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-plugin-transform-runtime": "^6.23.0",
@@ -18,13 +19,20 @@
     "babel-preset-flow": "^6.23.0",
     "babel-preset-react": "^6.24.1",
     "babel-runtime": "^6.26.0",
+    "faker": "^4.1.0",
+    "file-loader": "^1.1.11",
     "flow-bin": "^0.74.0",
+    "html-webpack-plugin": "^3.2.0",
     "lorem-ipsum": "^1.0.5",
     "npm-run-all": "^4.1.3",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
     "react-draggable": "^3.0.5",
-    "rimraf": "^2.6.2"
+    "react-helmet": "^5.2.0",
+    "rimraf": "^2.6.2",
+    "styled-components": "^3.3.2",
+    "webpack": "^4.12.0",
+    "webpack-dev-server": "^3.1.4"
   },
   "peerDependencies": {
     "react": "^16.4.1",
@@ -34,7 +42,11 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "flow": "flow",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "docs": "node ./docs/src/webpack.devserver.js",
+    "build-lib": "babel src --out-dir dist",
+    "build-storybook": "build-storybook -c .storybook -o ./docs/storybook",
+    "build-docs": "webpack --config ./docs/src/webpack.config.js --output-path ./docs",
+    "build": "run-p build-*"
   },
   "repository": {
     "type": "git",

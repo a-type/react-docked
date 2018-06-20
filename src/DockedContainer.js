@@ -1,6 +1,11 @@
 // @flow
 import React, { type Node } from 'react';
-import { type Point, type Attachment, type Alignment, type DockedContainerInfo } from './types';
+import {
+  type Point,
+  type Attachment,
+  type Alignment,
+  type DockedContainerInfo,
+} from './types';
 
 const getPositionalStyles = ({
   attachment,
@@ -149,7 +154,7 @@ export default class DockedContainer extends React.PureComponent<
       return children(rest);
     }
     return children;
-  }
+  };
 
   render() {
     const { style } = this.state;
